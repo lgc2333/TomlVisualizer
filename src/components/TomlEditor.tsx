@@ -1,6 +1,9 @@
+import type { Monaco } from '@monaco-editor/react'
+import type * as monaco from 'monaco-editor'
 import { makeStyles, tokens } from '@fluentui/react-components'
 import Editor from '@monaco-editor/react'
 import { parse as parseToml } from '@std/toml'
+import { useEffect, useRef } from 'react'
 
 interface TomlEditorProps {
   onChange: (value: string, parsedValue: any, error: Error | null) => void
@@ -45,6 +48,9 @@ role = "backend"
 export function TomlEditor({ onChange, initialValue, isDark }: TomlEditorProps) {
   const styles = useStyles()
 
+  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null)
+  const monacoRef = useRef<Monaco | null>(null)
+
   // 处理编辑器内容变化
   const handleEditorChange = (value: string | undefined) => {
     if (value === undefined) return
@@ -58,7 +64,13 @@ export function TomlEditor({ onChange, initialValue, isDark }: TomlEditorProps) 
   }
 
   // 编辑器挂载后的处理
-  const handleEditorDidMount = () => {
+  const handleEditorMount = (
+    editor: monaco.editor.IStandaloneCodeEditor,
+    monaco: Monaco,
+  ) => {
+    editorRef.current = editor
+    monacoRef.current = monaco
+
     const initialTomlValue = initialValue || DEFAULT_TOML
 
     // 初始解析
@@ -70,22 +82,49 @@ export function TomlEditor({ onChange, initialValue, isDark }: TomlEditorProps) 
     }
   }
 
+  useEffect(() => {
+    const handler = (event: KeyboardEvent) => {
+      if (editorRef.current && event.key === 'Tab') {
+        event.preventDefault()
+        const editorEl = document.querySelector('#monaco-editor') as HTMLElement
+        const activeElement = document.activeElement as HTMLElement
+        if (activeElement && activeElement !== editorEl) {
+          editorRef.current.trigger(
+            'keyboard',
+            event.shiftKey ? 'editor.action.outdentLines' : 'editor.action.indentLines',
+            null,
+          )
+        }
+      }
+    }
+    document.addEventListener('keydown', handler)
+    return () => {
+      document.removeEventListener('keydown', handler)
+    }
+  }, [editorRef])
+
   return (
-    <div className={styles.container}>
+    <div className={styles.container} id="editor">
       <Editor
         defaultLanguage="toml"
         defaultValue={initialValue || DEFAULT_TOML}
         theme={isDark ? 'fluent-dark' : 'fluent'}
         options={{
           minimap: { enabled: false },
-          scrollBeyondLastLine: false,
           lineNumbers: 'on',
           wordWrap: 'on',
           fontSize: 14,
           tabSize: 2,
+          automaticLayout: true,
+          insertSpaces: true,
+          fixedOverflowWidgets: true,
+          tabCompletion: 'on',
+          useTabStops: true,
+          renderWhitespace: 'selection',
+          detectIndentation: true,
         }}
         onChange={handleEditorChange}
-        onMount={handleEditorDidMount}
+        onMount={handleEditorMount}
         height="100%"
         width="100%"
       />
