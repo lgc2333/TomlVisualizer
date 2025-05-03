@@ -85,10 +85,10 @@ export function TomlEditor({ onChange, initialValue, isDark }: TomlEditorProps) 
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
       if (editorRef.current && event.key === 'Tab') {
-        event.preventDefault()
         const editorEl = document.querySelector('#monaco-editor') as HTMLElement
         const activeElement = document.activeElement as HTMLElement
         if (activeElement && activeElement !== editorEl) {
+          event.preventDefault()
           editorRef.current.trigger(
             'keyboard',
             event.shiftKey ? 'editor.action.outdentLines' : 'editor.action.indentLines',
