@@ -14,6 +14,7 @@ export default antfu(
       'style/quotes': 'off',
       'style/member-delimiter-style': 'off',
       'style/jsx-wrap-multilines': 'off',
+      'antfu/consistent-list-newline': 'off',
     },
   },
 )

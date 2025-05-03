@@ -14,7 +14,19 @@
     "errorMessage": "TOML 解析错误：",
     "booleanTrue": "真 (true)",
     "booleanFalse": "假 (false)",
+    "objectProperty": "{ {{count}} 个属性 }",
     "objectProperties": "{ {{count}} 个属性 }",
+    "arrayItem": "[ {{count}} 个元素 ]",
     "arrayItems": "[ {{count}} 个元素 ]"
+  },
+  "error": {
+    "parseError": "在第 {{line}} 行中的第 {{column}} 个字符上出现解析错误：{{message}}",
+    "singleLineStringEOL": "单行字符串不能换行（可能是忘记了结尾引号）",
+    "notClosedBy": "“{{start}}” 开始后没有被 “{{end}}” 关闭",
+    "pairHasNotEqual": "键值对不包含 “=”",
+    "unexpectedCharacter": "意外的字符 “{{char}}”",
+    "arrayNotClosed": "数组没有被 “]” 关闭",
+    "invalidDateString": "无效的日期字符串 “{{date}}”",
+    "canNotParseLineValue": "无法解析行中的值：{{line}}"
   }
 }

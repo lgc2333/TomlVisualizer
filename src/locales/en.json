@@ -14,7 +14,9 @@
     "errorMessage": "TOML Parse Error:",
     "booleanTrue": "true",
     "booleanFalse": "false",
+    "objectProperty": "{ {{count}} property }",
     "objectProperties": "{ {{count}} properties }",
+    "arrayItem": "[ {{count}} item ]",
     "arrayItems": "[ {{count}} items ]"
   }
 }

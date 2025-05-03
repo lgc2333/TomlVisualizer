@@ -261,7 +261,7 @@ export const TomlViewer: React.FC<TomlViewerProps> = ({
 }) => {
   const styles = useStyles()
   const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>({})
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   // 切换节点展开状态
   const toggleNode = useCallback(
@@ -337,12 +337,70 @@ export const TomlViewer: React.FC<TomlViewerProps> = ({
     )
   }
 
+  const localizeErrorMessage = (message: string) =>
+    message.replace(
+      /^Parse error on line (?<line>\d+), column (?<column>\d+): (?<message>[\s\S]+)$/,
+      (...x) => {
+        const {
+          line,
+          column,
+          message: messageRaw,
+        } = x[x.length - 1] as Record<string, string>
+
+        type MsgReplacements = [
+          string | RegExp,
+          (o: Record<string, string>) => string,
+        ][]
+        const replaceOnce = (str: string, replacements: MsgReplacements) => {
+          for (const [pattern, replacement] of replacements) {
+            if (str.match(pattern)) {
+              return str.replace(pattern, (...y) =>
+                replacement(y[y.length - 1] as Record<string, string>),
+              )
+            }
+          }
+          return str
+        }
+        const msgReplacements: MsgReplacements = [
+          [
+            /^Single-line string cannot contain EOL$/,
+            (o) => t('error.singleLineStringEOL', o),
+          ],
+          [
+            /^Not closed by "(?<end>.+?)" after started with "(?<start>.+?)"$/,
+            (o) => t('error.notClosedBy', o),
+          ],
+          [/^key\/value pair doesn't have "="$/, (o) => t('error.pairHasNotEqual', o)],
+          [
+            /(Parse error on line (\d+), column (\d+): )?Unexpected character: "(?<char>.+)"$/,
+            (o) => t('error.unexpectedCharacter', o),
+          ],
+          [/^Array is not closed$/, (o) => t('error.arrayNotClosed', o)],
+          [
+            /^Invalid date string "(?<date>[\s\S]+)"$/,
+            (o) => t('error.invalidDateString', o),
+          ],
+          [
+            /^Cannot parse value on line '(?<line>[\s\S]+)'$/,
+            (o) => t('error.canNotParseLineValue', o),
+          ],
+        ]
+
+        return t('error.parseError', {
+          line,
+          column,
+          message: replaceOnce(messageRaw, msgReplacements),
+        })
+      },
+    )
+
   // 如果有错误，显示错误信息
   if (error) {
     return (
       <div className={styles.container}>
         <div className={styles.error}>
           <Text weight="semibold">{t('viewer.errorMessage')}</Text>
+          {i18n.language !== 'en' && <Text>{localizeErrorMessage(error.message)}</Text>}
           <Text>{error.message}</Text>
         </div>
       </div>
@@ -434,12 +492,12 @@ export const TomlViewer: React.FC<TomlViewerProps> = ({
             {canHaveChildren && (
               <span className={styles.objectSummary}>
                 {node.type === 'object'
-                  ? t('viewer.objectProperties', {
-                      count: node.children!.length,
-                    })
-                  : t('viewer.arrayItems', {
-                      count: node.value.length,
-                    })}
+                  ? node.children!.length > 1
+                    ? t('viewer.objectProperties', { count: node.children!.length })
+                    : t('viewer.objectProperty', { count: node.children!.length })
+                  : node.value.length > 1
+                    ? t('viewer.arrayItems', { count: node.value.length })
+                    : t('viewer.arrayItem', { count: node.value.length })}
               </span>
             )}
           </div>
