@@ -9,6 +9,9 @@
     "expandAll": "展开全部",
     "collapseAll": "收起全部"
   },
+  "editor": {
+    "loading": "加载编辑器中..."
+  },
   "viewer": {
     "emptyMessage": "在编辑器中输入 TOML 以查看可视化结果",
     "errorMessage": "TOML 解析错误：",

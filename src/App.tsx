@@ -15,9 +15,10 @@ import {
   WeatherSunny24Regular,
 } from '@fluentui/react-icons'
 import { Icon } from '@iconify/react'
+import { useMonaco } from '@monaco-editor/react'
 import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 
+import { useTranslation } from 'react-i18next'
 import LanguageSwitcher from './components/LanguageSwitcher'
 import { ResizablePanel } from './components/ResizablePanel'
 import { TomlEditor } from './components/TomlEditor'
@@ -57,6 +58,15 @@ const useStyles = makeStyles({
     margin: '8px',
     marginTop: 0,
   },
+  monacoLoading: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
+    width: '100%',
+    backgroundColor: tokens.colorNeutralBackground1,
+    color: tokens.colorNeutralForeground3,
+  },
 })
 
 // 主应用内容组件
@@ -64,6 +74,8 @@ function AppContent() {
   const styles = useStyles()
   const { isDark, toggleDark } = useDarkMode()
   const { t } = useTranslation()
+  const monaco = useMonaco()
+
   const [tomlData, setTomlData] = useState<any>(null)
   const [tomlError, setTomlError] = useState<Error | null>(null)
 
@@ -106,6 +118,31 @@ function AppContent() {
   useEffect(() => {
     document.title = t('app.title')
   }, [t])
+
+  const getPureVarStrVal = (varName: string) => {
+    return getComputedStyle(
+      document.querySelector('#root')!.children[0],
+    ).getPropertyValue(varName)
+  }
+
+  const getVarVal = (varName: string) =>
+    getPureVarStrVal(varName.replace(/^var\(/, '').replace(/\)$/, ''))
+
+  const getBackgroundColor = () => getVarVal(tokens.colorNeutralBackground1)
+
+  useEffect(() => {
+    if (monaco) {
+      const themeId = isDark ? 'fluent-dark' : 'fluent'
+      monaco.editor.defineTheme(themeId, {
+        base: isDark ? 'vs-dark' : 'vs',
+        inherit: true,
+        rules: [],
+        colors: {
+          'editor.background': getBackgroundColor(),
+        },
+      })
+    }
+  }, [monaco, isDark])
 
   return (
     <FluentProvider theme={isDark ? webDarkTheme : webLightTheme}>
@@ -159,7 +196,13 @@ function AppContent() {
         </header>
         <main className={styles.mainContent}>
           <ResizablePanel
-            left={<TomlEditor onChange={handleTomlChange} />}
+            left={
+              monaco ? (
+                <TomlEditor onChange={handleTomlChange} isDark={isDark} />
+              ) : (
+                <div className={styles.monacoLoading}>加载编辑器中...</div>
+              )
+            }
             right={
               <TomlViewer
                 data={tomlData}

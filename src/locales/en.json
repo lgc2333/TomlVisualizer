@@ -9,6 +9,9 @@
     "expandAll": "Expand All",
     "collapseAll": "Collapse All"
   },
+  "editor": {
+    "loading": "Loading editor..."
+  },
   "viewer": {
     "emptyMessage": "Type TOML in the editor to see the visual result",
     "errorMessage": "TOML Parse Error:",

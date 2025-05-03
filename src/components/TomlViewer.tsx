@@ -423,14 +423,14 @@ export const TomlViewer: React.FC<TomlViewerProps> = ({
         return value ? t('viewer.booleanTrue') : t('viewer.booleanFalse')
       case 'date':
         return value.toISOString()
-      case 'null':
-        return 'null'
-      case 'undefined':
-        return 'undefined'
-      case 'array':
-        return '[...]'
-      case 'object':
-        return '{...}'
+      // case 'null':
+      //   return 'null'
+      // case 'undefined':
+      //   return 'undefined'
+      // case 'array':
+      //   return '[...]'
+      // case 'object':
+      //   return '{...}'
       default:
         return String(value)
     }
@@ -450,8 +450,8 @@ export const TomlViewer: React.FC<TomlViewerProps> = ({
         >
           {level > 0 && (
             <>
-              {Array.from({ length: level }, () => (
-                <div className={styles.indentLineContainer}>
+              {Array.from({ length: level }, (_, i) => (
+                <div className={styles.indentLineContainer} key={i}>
                   <div className={styles.indentLine}></div>
                 </div>
               ))}
