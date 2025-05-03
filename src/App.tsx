@@ -1,0 +1,191 @@
+import {
+  Button,
+  FluentProvider,
+  makeStyles,
+  shorthands,
+  tokens,
+  Tooltip,
+  webDarkTheme,
+  webLightTheme,
+} from '@fluentui/react-components'
+import {
+  ArrowCollapseAll24Filled,
+  ArrowExpandAll24Filled,
+  WeatherMoon24Regular,
+  WeatherSunny24Regular,
+} from '@fluentui/react-icons'
+import { Icon } from '@iconify/react'
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+
+import LanguageSwitcher from './components/LanguageSwitcher'
+import { ResizablePanel } from './components/ResizablePanel'
+import { TomlEditor } from './components/TomlEditor'
+import { TomlViewer } from './components/TomlViewer'
+import { DarkModeProvider, useDarkMode } from './context/DarkModeContext'
+import './App.css'
+
+// 样式定义
+const useStyles = makeStyles({
+  app: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+    width: '100vw',
+    backgroundColor: tokens.colorNeutralBackground2,
+    color: tokens.colorNeutralForeground1,
+  },
+  header: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    ...shorthands.padding('8px', '16px'),
+  },
+  title: {
+    fontSize: tokens.fontSizeBase600,
+    fontWeight: tokens.fontWeightSemibold,
+  },
+  headerActions: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+  },
+  mainContent: {
+    display: 'flex',
+    flexGrow: 1,
+    overflowY: 'hidden',
+    margin: '8px',
+    marginTop: 0,
+  },
+})
+
+// 主应用内容组件
+function AppContent() {
+  const styles = useStyles()
+  const { isDark, toggleDark } = useDarkMode()
+  const { t } = useTranslation()
+  const [tomlData, setTomlData] = useState<any>(null)
+  const [tomlError, setTomlError] = useState<Error | null>(null)
+
+  // 添加展开/收起全部的状态控制
+  const [expandAll, setExpandAll] = useState<boolean>(false)
+  const [collapseAll, setCollapseAll] = useState<boolean>(false)
+
+  // 处理主题过渡动画
+  const handleThemeToggle = () => {
+    document.documentElement.style.viewTransitionName = 'root'
+    document.startViewTransition(() => {
+      toggleDark()
+    })
+  }
+
+  // 处理TOML编辑器的变化
+  const handleTomlChange = (_value: string, parsedValue: any, error: Error | null) => {
+    setTomlData(parsedValue)
+    setTomlError(error)
+  }
+
+  // 处理展开全部按钮点击
+  const handleExpandAll = () => {
+    setExpandAll(true)
+    setCollapseAll(false)
+  }
+
+  // 处理收起全部按钮点击
+  const handleCollapseAll = () => {
+    setCollapseAll(true)
+    setExpandAll(false)
+  }
+
+  // 节点状态变更后重置控制标志
+  const handleExpandStateChange = () => {
+    setExpandAll(false)
+    setCollapseAll(false)
+  }
+
+  useEffect(() => {
+    document.title = t('app.title')
+  }, [t])
+
+  return (
+    <FluentProvider theme={isDark ? webDarkTheme : webLightTheme}>
+      <div className={styles.app}>
+        <header className={styles.header}>
+          <Tooltip content={t('app.description')}>
+            <div className={styles.title}>{t('app.title')}</div>
+          </Tooltip>
+          <div className={styles.headerActions}>
+            <Tooltip content={t('app.expandAll')}>
+              <Button
+                appearance="subtle"
+                icon={<ArrowExpandAll24Filled />}
+                onClick={handleExpandAll}
+                aria-label={t('app.expandAll')}
+                disabled={
+                  !tomlData || Object.keys(tomlData).length === 0 || Boolean(tomlError)
+                }
+              />
+            </Tooltip>
+            <Tooltip content={t('app.collapseAll')}>
+              <Button
+                appearance="subtle"
+                icon={<ArrowCollapseAll24Filled />}
+                onClick={handleCollapseAll}
+                aria-label={t('app.collapseAll')}
+                disabled={
+                  !tomlData || Object.keys(tomlData).length === 0 || Boolean(tomlError)
+                }
+              />
+            </Tooltip>
+            <Tooltip content={t('app.github')}>
+              <a href="https://github.com/lgc2333/TomlVisualizer" target="_blank">
+                <Button
+                  appearance="subtle"
+                  icon={<Icon icon="proicons:github" />}
+                  aria-label={t('app.github')}
+                />
+              </a>
+            </Tooltip>
+            <LanguageSwitcher />
+            <Tooltip content={isDark ? t('app.lightMode') : t('app.darkMode')}>
+              <Button
+                appearance="subtle"
+                icon={isDark ? <WeatherSunny24Regular /> : <WeatherMoon24Regular />}
+                onClick={handleThemeToggle}
+                aria-label={isDark ? t('app.lightMode') : t('app.darkMode')}
+              />
+            </Tooltip>
+          </div>
+        </header>
+        <main className={styles.mainContent}>
+          <ResizablePanel
+            left={<TomlEditor onChange={handleTomlChange} />}
+            right={
+              <TomlViewer
+                data={tomlData}
+                error={tomlError}
+                expandAll={expandAll}
+                collapseAll={collapseAll}
+                onExpandStateChange={handleExpandStateChange}
+              />
+            }
+            initialLeftWidth={45}
+            minLeftWidth={20}
+            maxLeftWidth={80}
+          />
+        </main>
+      </div>
+    </FluentProvider>
+  )
+}
+
+// 包装App组件，提供DarkModeProvider
+function App() {
+  return (
+    <DarkModeProvider>
+      <AppContent />
+    </DarkModeProvider>
+  )
+}
+
+export default App

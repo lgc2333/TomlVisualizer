@@ -1,0 +1,20 @@
+{
+  "app": {
+    "title": "TOML 可视化工具",
+    "description": "一个简单的 TOML 可视化工具，使用 AI 构建（因为我不会写 React）。写给想要熟悉 TOML 格式的人。",
+    "darkMode": "深色模式",
+    "lightMode": "浅色模式",
+    "language": "语言",
+    "github": "GitHub",
+    "expandAll": "展开全部",
+    "collapseAll": "收起全部"
+  },
+  "viewer": {
+    "emptyMessage": "在编辑器中输入 TOML 以查看可视化结果",
+    "errorMessage": "TOML 解析错误：",
+    "booleanTrue": "真 (true)",
+    "booleanFalse": "假 (false)",
+    "objectProperties": "{ {{count}} 个属性 }",
+    "arrayItems": "[ {{count}} 个元素 ]"
+  }
+}

@@ -1,0 +1,66 @@
+@keyframes theme-transition {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@property --theme-transition {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: transparent;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(app) {
+    opacity: 1;
+  }
+
+  ::view-transition-new(app) {
+    opacity: 0;
+  }
+
+  .dark::view-transition-old(app) {
+    opacity: 0;
+  }
+
+  .dark::view-transition-new(app) {
+    opacity: 1;
+  }
+}
+
+/* 允许覆盖默认的滚动条样式 */
+* {
+  scrollbar-width: thin;
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(100, 100, 100, 0.4);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(100, 100, 100, 0.6);
+}
+
+/* 确保应用填满视口 */
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}

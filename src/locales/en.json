@@ -1,0 +1,20 @@
+{
+  "app": {
+    "title": "TOML Visualizer",
+    "description": "A simple toml visualizer tool built with AI (Because I can't write React). For people want to be familiar with toml format.",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode",
+    "language": "Language",
+    "github": "GitHub",
+    "expandAll": "Expand All",
+    "collapseAll": "Collapse All"
+  },
+  "viewer": {
+    "emptyMessage": "Type TOML in the editor to see the visual result",
+    "errorMessage": "TOML Parse Error:",
+    "booleanTrue": "true",
+    "booleanFalse": "false",
+    "objectProperties": "{ {{count}} properties }",
+    "arrayItems": "[ {{count}} items ]"
+  }
+}
