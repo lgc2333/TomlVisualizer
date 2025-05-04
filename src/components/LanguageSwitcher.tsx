@@ -1,9 +1,11 @@
 import {
   Button,
   makeStyles,
-  Popover,
-  PopoverSurface,
-  PopoverTrigger,
+  Menu,
+  MenuItem,
+  MenuList,
+  MenuPopover,
+  MenuTrigger,
   tokens,
   Tooltip,
 } from '@fluentui/react-components'
@@ -44,7 +46,6 @@ function LanguageSwitcher() {
   const { i18n, t } = useTranslation()
   const [currentLang, setCurrentLang] = useState(i18n.language)
   const styles = useStyles()
-  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     setCurrentLang(i18n.language)
@@ -53,13 +54,12 @@ function LanguageSwitcher() {
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng)
     setCurrentLang(lng)
-    setOpen(false) // 选择语言后关闭弹出层
   }
 
   return (
     <div className={styles.switcherContainer}>
-      <Popover open={open} onOpenChange={(_e, data) => setOpen(data.open)}>
-        <PopoverTrigger>
+      <Menu>
+        <MenuTrigger>
           <Tooltip content={t('app.language')}>
             <Button
               appearance="subtle"
@@ -68,25 +68,24 @@ function LanguageSwitcher() {
               className={styles.languageButton}
             />
           </Tooltip>
-        </PopoverTrigger>
-
-        <PopoverSurface>
-          <div className={styles.popoverContent}>
-            <div
+        </MenuTrigger>
+        <MenuPopover>
+          <MenuList>
+            <MenuItem
               className={`${styles.langOption} ${currentLang.startsWith('en') ? 'active' : ''}`}
               onClick={() => changeLanguage('en')}
             >
               English
-            </div>
-            <div
+            </MenuItem>
+            <MenuItem
               className={`${styles.langOption} ${currentLang.startsWith('zh') ? 'active' : ''}`}
               onClick={() => changeLanguage('zh')}
             >
               中文
-            </div>
-          </div>
-        </PopoverSurface>
-      </Popover>
+            </MenuItem>
+          </MenuList>
+        </MenuPopover>
+      </Menu>
     </div>
   )
 }

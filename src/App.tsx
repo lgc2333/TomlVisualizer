@@ -16,9 +16,10 @@ import {
 } from '@fluentui/react-icons'
 import { Icon } from '@iconify/react'
 import { useMonaco } from '@monaco-editor/react'
-import { useEffect, useState } from 'react'
-
+import * as lodash from 'lodash'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+
 import LanguageSwitcher from './components/LanguageSwitcher'
 import { ResizablePanel } from './components/ResizablePanel'
 import { TomlEditor } from './components/TomlEditor'
@@ -45,6 +46,9 @@ const useStyles = makeStyles({
   title: {
     fontSize: tokens.fontSizeBase600,
     fontWeight: tokens.fontWeightSemibold,
+  },
+  titleMobile: {
+    fontSize: `${tokens.fontSizeBase400} !important`,
   },
   headerActions: {
     display: 'flex',
@@ -83,6 +87,24 @@ function AppContent() {
   const [expandAll, setExpandAll] = useState<boolean>(false)
   const [collapseAll, setCollapseAll] = useState<boolean>(false)
 
+  const [viewAnimationRunning, setViewAnimationRunning] = useState<boolean>(false)
+
+  const mobileBreakpoint = 1024 // 默认断点为768px
+
+  const [isMobile, setIsMobile] = useState(false)
+
+  // 检测屏幕宽度并更新布局方向
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < mobileBreakpoint)
+    }
+    checkScreenSize()
+    window.addEventListener('resize', checkScreenSize)
+    return () => {
+      window.removeEventListener('resize', checkScreenSize)
+    }
+  }, [mobileBreakpoint])
+
   // 处理主题过渡动画
   const handleThemeToggle = () => {
     document.documentElement.style.viewTransitionName = 'root'
@@ -92,10 +114,14 @@ function AppContent() {
   }
 
   // 处理TOML编辑器的变化
-  const handleTomlChange = (_value: string, parsedValue: any, error: Error | null) => {
-    setTomlData(parsedValue)
-    setTomlError(error)
-  }
+  const handleTomlChange = lodash.throttle(
+    (_value: string, parsedValue: any, error: Error | null) => {
+      setTomlData(parsedValue)
+      setTomlError(error)
+    },
+    200,
+    { leading: false, trailing: true },
+  )
 
   // 处理展开全部按钮点击
   const handleExpandAll = () => {
@@ -113,6 +139,14 @@ function AppContent() {
   const handleExpandStateChange = () => {
     setExpandAll(false)
     setCollapseAll(false)
+  }
+
+  const handleViewerAnimationStart = () => {
+    setViewAnimationRunning(true)
+  }
+
+  const handleViewerAnimationEnd = () => {
+    setViewAnimationRunning(false)
   }
 
   useEffect(() => {
@@ -144,12 +178,23 @@ function AppContent() {
     }
   }, [monaco, isDark])
 
+  const treeOpBtnDisabled = useMemo(() => {
+    return (
+      viewAnimationRunning ||
+      !tomlData ||
+      Object.keys(tomlData).length === 0 ||
+      Boolean(tomlError)
+    )
+  }, [tomlData, tomlError, viewAnimationRunning])
+
   return (
     <FluentProvider theme={isDark ? webDarkTheme : webLightTheme}>
       <div className={styles.app}>
         <header className={styles.header}>
           <Tooltip content={t('app.description')}>
-            <div className={styles.title}>{t('app.title')}</div>
+            <div className={`${styles.title} ${isMobile ? styles.titleMobile : ''}`}>
+              {t('app.title')}
+            </div>
           </Tooltip>
           <div className={styles.headerActions}>
             <Tooltip content={t('app.expandAll')}>
@@ -158,9 +203,7 @@ function AppContent() {
                 icon={<ArrowExpandAll24Filled />}
                 onClick={handleExpandAll}
                 aria-label={t('app.expandAll')}
-                disabled={
-                  !tomlData || Object.keys(tomlData).length === 0 || Boolean(tomlError)
-                }
+                disabled={treeOpBtnDisabled}
               />
             </Tooltip>
             <Tooltip content={t('app.collapseAll')}>
@@ -169,9 +212,7 @@ function AppContent() {
                 icon={<ArrowCollapseAll24Filled />}
                 onClick={handleCollapseAll}
                 aria-label={t('app.collapseAll')}
-                disabled={
-                  !tomlData || Object.keys(tomlData).length === 0 || Boolean(tomlError)
-                }
+                disabled={treeOpBtnDisabled}
               />
             </Tooltip>
             <Tooltip content={t('app.github')}>
@@ -210,9 +251,12 @@ function AppContent() {
                 expandAll={expandAll}
                 collapseAll={collapseAll}
                 onExpandStateChange={handleExpandStateChange}
+                onAnimationStart={handleViewerAnimationStart}
+                onAnimationEnd={handleViewerAnimationEnd}
               />
             }
-            initialLeftWidth={45}
+            initialLeftWidth={50}
+            isVertical={isMobile}
             minLeftWidth={20}
             maxLeftWidth={80}
           />

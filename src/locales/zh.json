@@ -10,17 +10,36 @@
     "collapseAll": "收起全部"
   },
   "editor": {
-    "loading": "加载编辑器中..."
+    "loading": "加载编辑器中...",
+    "defaultToml": "# 这是一个TOML文档，此行是注释，解析器会忽略\n# 鼠标悬停在图标上或树中的数组索引（如[0]）查看更多信息\n# 鼠标悬停在标题上可以查看网站介绍\n\ntitle = \"TOML示例\"  # 另一个注释\n\n[owner]\nname = \"张三\"\ndob = 1979-05-27T07:32:00-08:00\n\n[note]\n\"单行字符串\" = \"你的\\\"电脑\\\"将重新启动多次。\\n坐和放宽，'好东西'就要来了！\"\n\"同样的多行字符串\" = \"\"\"\n你的\"电脑\"将重新启动多次。\n坐和放宽，\\\n'好东西'就要来了！\n\"\"\"\n\"带 空格 的 键名\" = \"值\"\n\"带换行\\n的键\" = \"已换行！\"\n\"单引号包裹的字符串中内容不会转义\" = '你看\\n没有换行'\n\n[special_numbers]\ninf = inf\nnan = nan\n\n[database]\nenabled = true\nports = [ 8000, 8001, 8002 ]\ndata = [ [\"delta\", \"phi\"], [3.14] ]\ntemp_targets = { cpu = 79.5, case = 72.0 }\n\n[servers]\n\n[servers.alpha]\nip = \"10.0.0.1\"\nrole = \"前端\"\n\n[servers.beta]\nip = \"10.0.0.2\"\nrole = \"后端\"\n\n[[clients]]\nname = \"李四\"\nemail = \"lisi@example.com\"\n\n[[clients]]\nname = \"王五\"\nemail = \"wangwu@example.com\"\nactive = true\n\n[clients.info]\ndescription = \"一些描述\"\n"
   },
   "viewer": {
     "emptyMessage": "在编辑器中输入 TOML 以查看可视化结果",
     "errorMessage": "TOML 解析错误：",
-    "booleanTrue": "真 (true)",
-    "booleanFalse": "假 (false)",
     "objectProperty": "{ {{count}} 个属性 }",
     "objectProperties": "{ {{count}} 个属性 }",
     "arrayItem": "[ {{count}} 个元素 ]",
-    "arrayItems": "[ {{count}} 个元素 ]"
+    "arrayItems": "[ {{count}} 个元素 ]",
+    "itemIndexInArray": "数组中的第 {{place}} 个元素（处于索引 {{index}}）",
+    "type": {
+      "string": "字符串 (String)",
+      "integer": "整数 (Integer)",
+      "float": "浮点数 (Float)",
+      "inf": "无穷大 (Infinity)",
+      "nan": "非数字 (NaN)",
+      "boolean": "布尔值 (Boolean)",
+      "date": "日期 (Date)",
+      "array": "数组 (Array)",
+      "object": "表 (Table)",
+      "null": "空 (null)",
+      "undefined": "未定义 (undefined)"
+    },
+    "value": {
+      "true": "是 (true)",
+      "false": "否 (false)",
+      "null": "空 (null)",
+      "undefined": "未定义 (undefined)"
+    }
   },
   "error": {
     "parseError": "在第 {{line}} 行中的第 {{column}} 个字符上出现解析错误：{{message}}",

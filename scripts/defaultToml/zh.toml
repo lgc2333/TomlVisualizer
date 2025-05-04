@@ -1,0 +1,52 @@
+# 这是一个TOML文档，此行是注释，解析器会忽略
+# 鼠标悬停在图标上或树中的数组索引（如[0]）查看更多信息
+# 鼠标悬停在标题上可以查看网站介绍
+
+title = "TOML示例"  # 另一个注释
+
+[owner]
+name = "张三"
+dob = 1979-05-27T07:32:00-08:00
+
+[note]
+"单行字符串" = "你的\"电脑\"将重新启动多次。\n坐和放宽，'好东西'就要来了！"
+"同样的多行字符串" = """
+你的"电脑"将重新启动多次。
+坐和放宽，\
+'好东西'就要来了！
+"""
+"带 空格 的 键名" = "值"
+"带换行\n的键" = "已换行！"
+"单引号包裹的字符串中内容不会转义" = '你看\n没有换行'
+
+[special_numbers]
+inf = inf
+nan = nan
+
+[database]
+enabled = true
+ports = [ 8000, 8001, 8002 ]
+data = [ ["delta", "phi"], [3.14] ]
+temp_targets = { cpu = 79.5, case = 72.0 }
+
+[servers]
+
+[servers.alpha]
+ip = "10.0.0.1"
+role = "前端"
+
+[servers.beta]
+ip = "10.0.0.2"
+role = "后端"
+
+[[clients]]
+name = "李四"
+email = "lisi@example.com"
+
+[[clients]]
+name = "王五"
+email = "wangwu@example.com"
+active = true
+
+[clients.info]
+description = "一些描述"

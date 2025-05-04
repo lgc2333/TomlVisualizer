@@ -10,16 +10,35 @@
     "collapseAll": "Collapse All"
   },
   "editor": {
-    "loading": "Loading editor..."
+    "loading": "Loading editor...",
+    "defaultToml": "# This is a TOML document, and this line is a comment, parser will ignore this\n# You can see more information by hovering on the icons, or array index (like [0]) in the tree\n# Hover on the title you can see the website description\n\ntitle = \"TOML Example\"  # Another comment\n\n[owner]\nname = \"Tom Preston-Werner\"\ndob = 1979-05-27T07:32:00-08:00\n\n[note]\nsingle_line_string = \"The quick 'brown fox'\\njumps over the \\\"lazy dog\\\"\"\nmulti_line_string = \"\"\"\nThe quick 'brown fox'\njumps over the \\\n\"lazy dog\"\\\n\"\"\"\n\"Key With Space\" = \"Value\"\n\"Key With\\nLine Break\" = \"Broke!\"\n\"String with single quotes won't escape\" = 'You see\\nno line break'\n\n[special_numbers]\ninf = inf\nnan = nan\n\n[database]\nenabled = true\nports = [ 8000, 8001, 8002 ]\ndata = [ [\"delta\", \"phi\"], [3.14] ]\ntemp_targets = { cpu = 79.5, case = 72.0 }\n\n[servers]\n\n[servers.alpha]\nip = \"10.0.0.1\"\nrole = \"frontend\"\n\n[servers.beta]\nip = \"10.0.0.2\"\nrole = \"backend\"\n\n[[clients]]\nname = \"Alice\"\nemail = \"alice@example.com\"\n\n[[clients]]\nname = \"Bob\"\nemail = \"bob@example.com\"\nactive = true\n\n[clients.info]\ndescription = \"Some description\"\n"
   },
   "viewer": {
     "emptyMessage": "Type TOML in the editor to see the visual result",
     "errorMessage": "TOML Parse Error:",
-    "booleanTrue": "true",
-    "booleanFalse": "false",
     "objectProperty": "{ {{count}} property }",
     "objectProperties": "{ {{count}} properties }",
     "arrayItem": "[ {{count}} item ]",
-    "arrayItems": "[ {{count}} items ]"
+    "arrayItems": "[ {{count}} items ]",
+    "itemIndexInArray": "The {{place}}{{placeSuffix}} item in the array (at index {{index}})",
+    "type": {
+      "string": "String",
+      "integer": "Integer",
+      "float": "Float",
+      "inf": "Infinity",
+      "nan": "NaN",
+      "boolean": "Boolean",
+      "date": "Date",
+      "array": "Array",
+      "object": "Table",
+      "null": "Null",
+      "undefined": "Undefined"
+    },
+    "value": {
+      "true": "true",
+      "false": "false",
+      "null": "null",
+      "undefined": "undefined"
+    }
   }
 }

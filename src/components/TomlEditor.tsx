@@ -3,7 +3,8 @@ import type * as monaco from 'monaco-editor'
 import { makeStyles, tokens } from '@fluentui/react-components'
 import Editor from '@monaco-editor/react'
 import { parse as parseToml } from '@std/toml'
-import { useEffect, useRef } from 'react'
+import { useMemo, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface TomlEditorProps {
   onChange: (value: string, parsedValue: any, error: Error | null) => void
@@ -20,36 +21,16 @@ const useStyles = makeStyles({
   },
 })
 
-const DEFAULT_TOML = `# This is a TOML document
-
-title = "TOML Example"
-
-[owner]
-name = "Tom Preston-Werner"
-dob = 1979-05-27T07:32:00-08:00
-
-[database]
-enabled = true
-ports = [ 8000, 8001, 8002 ]
-data = [ ["delta", "phi"], [3.14] ]
-temp_targets = { cpu = 79.5, case = 72.0 }
-
-[servers]
-
-[servers.alpha]
-ip = "10.0.0.1"
-role = "frontend"
-
-[servers.beta]
-ip = "10.0.0.2"
-role = "backend"
-`
-
 export function TomlEditor({ onChange, initialValue, isDark }: TomlEditorProps) {
   const styles = useStyles()
+  const { t } = useTranslation()
 
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null)
   const monacoRef = useRef<Monaco | null>(null)
+
+  const defaultToml = useMemo(() => {
+    return t('editor.defaultToml')
+  }, [t])
 
   // 处理编辑器内容变化
   const handleEditorChange = (value: string | undefined) => {
@@ -71,7 +52,7 @@ export function TomlEditor({ onChange, initialValue, isDark }: TomlEditorProps) 
     editorRef.current = editor
     monacoRef.current = monaco
 
-    const initialTomlValue = initialValue || DEFAULT_TOML
+    const initialTomlValue = initialValue || defaultToml
 
     // 初始解析
     try {
@@ -82,32 +63,11 @@ export function TomlEditor({ onChange, initialValue, isDark }: TomlEditorProps) 
     }
   }
 
-  useEffect(() => {
-    const handler = (event: KeyboardEvent) => {
-      if (editorRef.current && event.key === 'Tab') {
-        const editorEl = document.querySelector('#monaco-editor') as HTMLElement
-        const activeElement = document.activeElement as HTMLElement
-        if (activeElement && activeElement !== editorEl) {
-          event.preventDefault()
-          editorRef.current.trigger(
-            'keyboard',
-            event.shiftKey ? 'editor.action.outdentLines' : 'editor.action.indentLines',
-            null,
-          )
-        }
-      }
-    }
-    document.addEventListener('keydown', handler)
-    return () => {
-      document.removeEventListener('keydown', handler)
-    }
-  }, [editorRef])
-
   return (
     <div className={styles.container} id="editor">
       <Editor
         defaultLanguage="toml"
-        defaultValue={initialValue || DEFAULT_TOML}
+        defaultValue={initialValue || defaultToml}
         theme={isDark ? 'fluent-dark' : 'fluent'}
         options={{
           minimap: { enabled: false },

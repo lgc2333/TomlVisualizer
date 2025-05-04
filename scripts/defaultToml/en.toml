@@ -1,0 +1,52 @@
+# This is a TOML document, and this line is a comment, parser will ignore this
+# You can see more information by hovering on the icons, or array index (like [0]) in the tree
+# Hover on the title you can see the website description
+
+title = "TOML Example"  # Another comment
+
+[owner]
+name = "Tom Preston-Werner"
+dob = 1979-05-27T07:32:00-08:00
+
+[note]
+single_line_string = "The quick 'brown fox'\njumps over the \"lazy dog\""
+multi_line_string = """
+The quick 'brown fox'
+jumps over the \
+"lazy dog"\
+"""
+"Key With Space" = "Value"
+"Key With\nLine Break" = "Broke!"
+"String with single quotes won't escape" = 'You see\nno line break'
+
+[special_numbers]
+inf = inf
+nan = nan
+
+[database]
+enabled = true
+ports = [ 8000, 8001, 8002 ]
+data = [ ["delta", "phi"], [3.14] ]
+temp_targets = { cpu = 79.5, case = 72.0 }
+
+[servers]
+
+[servers.alpha]
+ip = "10.0.0.1"
+role = "frontend"
+
+[servers.beta]
+ip = "10.0.0.2"
+role = "backend"
+
+[[clients]]
+name = "Alice"
+email = "alice@example.com"
+
+[[clients]]
+name = "Bob"
+email = "bob@example.com"
+active = true
+
+[clients.info]
+description = "Some description"
